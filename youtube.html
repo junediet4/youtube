@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyTube Video Player</title>
+    <!-- Load Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        /* --- Custom YouTube-Style CSS --- */
+        
+        /* 1. Global Styles */
+        :root {
+            --yt-background: #f9f9f9;
+            --yt-white: #ffffff;
+            --yt-border-color: #ddd;
+            --yt-text-primary: #0f0f0f;
+            --yt-text-secondary: #606060;
+            --yt-search-border: #ccc;
+            --yt-search-button-bg: #f8f8f8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: "Roboto", Arial, sans-serif;
+            background-color: var(--yt-background);
+            color: var(--yt-text-primary);
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 2. Header / Navbar */
+        #main-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 56px;
+            background-color: var(--yt-white);
+            border-bottom: 1px solid var(--yt-border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .header-left .icon {
+            color: #FF0000;
+            font-size: 28px;
+            margin-right: 8px;
+        }
+        .header-left .logo-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--yt-text-primary);
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            max-width: 720px;
+            margin: 0 40px;
+        }
+        .search-form {
+            width: 100%;
+            display: flex;
+        }
+        #search-input {
+            flex: 1;
+            height: 40px;
+            padding: 0 12px;
+            font-size: 16px;
+            border: 1px solid var(--yt-search-border);
+            border-right: none;
+            border-radius: 40px 0 0 40px;
+            min-width: 50px; /* Allow shrinking */
+        }
+        #search-button {
+            width: 64px;
+            height: 40px;
+            border: 1px solid var(--yt-search-border);
+            background-color: var(--yt-search-button-bg);
+            border-radius: 0 40px 40px 0;
+            cursor: pointer;
+        }
+        #search-button .icon {
+            font-size: 16px;
+            color: var(--yt-text-secondary);
+        }
+        #search-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+        .header-right .icon {
+            font-size: 28px;
+            color: var(--yt-text-secondary);
+        }
+
+        /* 3. Main Content Area */
+        .main-content {
+            flex: 1;
+            overflow-y: auto; /* Allows content to scroll */
+            padding: 24px;
+        }
+        .content-grid {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            max-width: 1754px; /* Max width like YouTube */
+            margin: 0 auto;
+        }
+
+        /* 4. Video Player Column */
+        .video-primary-col {
+            flex: 1;
+            max-width: 1280px; /* Max player width */
+            margin: 0 24px;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+            border-radius: 12px; /* Rounded corners for player */
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-info {
+            padding-top: 20px;
+        }
+        #video-title {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 28px;
+            color: var(--yt-text-primary);
+            margin-bottom: 8px;
+        }
+        #video-description {
+            font-size: 14px;
+            line-height: 20px;
+            color: var(--yt-text-secondary);
+        }
+
+        /* 5. Recommendations Column */
+        .video-secondary-col {
+            width: 402px;
+            min-width: 300px;
+        }
+        .video-secondary-col h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        #results-container {
+            max-height: 85vh; /* Adjust height */
+            overflow-y: auto;
+        }
+
+        /* 6. Result Item Styling */
+        .result-item {
+            display: flex;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .result-thumb {
+            width: 168px;
+            height: 94px;
+            margin-right: 12px;
+        }
+        .result-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .result-info {
+            flex: 1;
+            min-width: 0; /* Prevents overflow */
+        }
+        .result-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--yt-text-primary);
+            line-height: 1.4;
+            margin-bottom: 4px;
+            
+            /* Ellipsis for long titles */
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .result-channel {
+            font-size: 12px;
+            color: var(--yt-text-secondary);
+        }
+        
+        /* 7. Error & Loading Styles */
+        .loading-spinner,
+        #scroll-loader {
+            font-size: 14px;
+            color: var(--yt-text-secondary);
+            text-align: center;
+            padding: 16px;
+        }
+        
+        .error-message {
+            border: 1px solid #ff4d4d;
+            background: #ffe6e6;
+            color: #cc0000;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* 8. Responsive (Mobile) */
+        @media (max-width: 1024px) {
+            .content-grid {
+                flex-direction: column;
+            }
+            .video-secondary-col {
+                width: 100%;
+                margin-top: 24px;
+            }
+            #results-container {
+                max-height: none; /* Remove fixed height on mobile */
+            }
+        }
+        @media (max-width: 640px) {
+            #main-header {
+                padding: 0 12px;
+            }
+            .header-center {
+                margin: 0 10px; /* Reduce margin */
+            }
+            .header-left .logo-title {
+                display: none; /* Hide title on small screens */
+            }
+            .main-content {
+                padding: 12px;
+            }
+            .video-primary-col {
+                margin: 0;
+            }
+            .result-thumb {
+                width: 120px;
+                height: 67px;
+            }
+            .result-title {
+                font-size: 13px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <nav id="main-header">
+        <div class="header-left">
+            <span class="icon"><i class="fab fa-youtube"></i></span>
+            <span class="logo-title">MyTube</span>
+        </div>
+
+        <div class="header-center">
+            <div class="search-form">
+                <input id="search-input" type="text" placeholder="Search">
+                <button id="search-button">
+                    <span class="icon"><i class="fas fa-search"></i></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <span class="icon"><i class="fas fa-user-circle"></i></span>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <section class="main-content">
+        <div class="content-grid">
+
+            <!-- Video Player Column -->
+            <div class="video-primary-col">
+                <div class="video-container">
+                    <iframe 
+                        id="youtube-player"
+                        src="" <!-- Will be set by JavaScript -->
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="video-info">
+                    <h1 id="video-title">
+                        <!-- Will be set by JavaScript -->
+                    </h1>
+                    <p id="video-description">
+                        <!-- Will be set by JavaScript -->
+                    </p>
+                </div>
+            </div>
+
+            <!-- Recommendations Column -->
+            <div class="video-secondary-col">
+                <h3>Up Next / Results</h3>
+                
+                <!-- Results Container -->
+                <div id="results-container">
+                    <!-- Loading message or error will be inserted here -->
+                    <p class="loading-spinner">
+                        <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                        Loading...
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // --- JavaScript for Interactivity ---
+        
+        // --- Default Video Configuration (Replaces PHP) ---
+        const defaultVideoId = '6lt2k1_gKaY';
+        const defaultVideoTitle = 'Beautiful 4K Nature Video';
+        const defaultVideoDescription = 'A stunning placeholder video to enjoy.';
+
+        // --- IMPORTANT -----------------------------------------------
+        // Paste your YouTube Data API key here.
+        const API_KEY = "YOUR_YOUTUBE_API_KEY_HERE";
+        // -------------------------------------------------------------
+        const API_BASE_URL = "https://www.googleapis.com/youtube/v3/search";
+
+        // --- State Variables for Infinite Scroll ---
+        let currentQuery = '';
+        let nextPageToken = null;
+        let isLoadingMore = false;
+
+        // --- Get DOM Elements ---
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const youtubePlayer = document.getElementById('youtube-player');
+        const resultsContainer = document.getElementById('results-container');
+        const videoTitle = document.getElementById('video-title');
+        const videoDescription = document.getElementById('video-description');
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDefaultVideo(); // Load the default video
+            checkApiKey();      // Then, check the API key and load results
+        });
+        
+        searchButton.addEventListener('click', handleSearch);
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+        
+        resultsContainer.addEventListener('scroll', handleScroll);
+
+        // --- Core Functions ---
+
+        /**
+         * NEW: Loads the default video info on page load.
+         */
+        function loadDefaultVideo() {
+            youtubePlayer.src = `https://www.youtube.com/embed/${defaultVideoId}?rel=0&autoplay=1&mute=1`;
+            videoTitle.textContent = defaultVideoTitle;
+            videoDescription.textContent = defaultVideoDescription;
+        }
+
+        /**
+         * Checks the API key on page load by performing a test search.
+         */
+        async function checkApiKey() {
+            if (API_KEY === "YOUR_YOUTUBE_API_KEY_HERE") {
+                displayError("<strong>API Key Not Set</strong><br>Please add your YouTube Data API key to the script to enable search.");
+                return;
+            }
+            
+            // Perform a test search to validate the key
+            currentQuery = "nature"; // Set initial query state
+            const data = await fetchVideos(currentQuery);
+            
+            if (data && data.items) {
+                displayResults(data.items, true); // Clear and display first page
+                nextPageToken = data.nextPageToken || null; // Store the token
+            }
+        }
+
+        /**
+         * Handles the user search button click.
+         */
+        async function handleSearch() {
+            const query = searchInput.value.trim();
+            if (!query) {
+                displayError("Please enter a search term.");
+                return;
+            }
+
+            if (API_KEY === "YOUR_YOUTUBE_API_KEY_HERE") {
+                displayError("<strong>API Key Not Set</strong><br>Please add your YouTube Data API key to the script to enable search.");
+                return;
+            }
+            
+            // Reset state for new search
+            currentQuery = query;
+            nextPageToken = null;
+            
+            resultsContainer.innerHTML = `
+                <p class="loading-spinner">
+                    <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                    Searching for "${query}"...
+                </p>`;
+
+            const data = await fetchVideos(currentQuery);
+            if (data && data.items) {
+                displayResults(data.items, true); // Clear and display results
+                nextPageToken = data.nextPageToken || null; // Store new token
+            }
+        }
+
+        /**
+         * Fetches videos from the YouTube API.
+         */
+        async function fetchVideos(query, pageToken = null) {
+            let url = `${API_BASE_URL}?part=snippet&q=${encodeURIComponent(query)}&key=${API_KEY}&type=video&maxResults=15`;
+            
+            if (pageToken) {
+                url += `&pageToken=${pageToken}`;
+            }
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const errorMsg = data.error?.message || `HTTP Error: ${response.status}`;
+                    console.error("API Error:", data);
+                    displayError(`<strong>Error:</strong> ${errorMsg}<br>Please check your API key and quota.`, !!pageToken);
+                    return null;
+                }
+
+                if (!data.items || data.items.length === 0) {
+                    displayError(`No results found for "${query}".`, !!pageToken);
+                    return null;
+                }
+                
+                return data;
+
+            } catch (error) {
+                console.error("Network Error:", error);
+                displayError("<strong>Network Error</strong><br>Could not connect to YouTube. Please check your internet connection.", !!pageToken);
+                return null;
+            }
+        }
+
+        /**
+         * Displays an error message in the results container.
+         */
+        function displayError(message, append = false) {
+            if (!append) {
+                resultsContainer.innerHTML = ''; 
+            }
+            
+            showScrollLoading(false); 
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message'; 
+            errorDiv.innerHTML = message;
+            resultsContainer.appendChild(errorDiv);
+        }
+
+        /**
+         * Displays the list of videos in the results container.
+         */
+        function displayResults(videos, clear = false) {
+            if (clear) {
+                resultsContainer.innerHTML = ''; 
+            }
+
+            showScrollLoading(false); 
+
+            videos.forEach(video => {
+                const videoId = video.id.videoId;
+                const title = video.snippet.title;
+                const channel = video.snippet.channelTitle;
+                const description = video.snippet.description;
+                const thumbnailUrl = video.snippet.thumbnails.default.url;
+
+                const item = document.createElement('article');
+                item.className = 'result-item';
+                item.innerHTML = `
+                    <div class="result-thumb">
+                        <img src="${thumbnailUrl}" alt="${title}">
+                    </div>
+                    <div class="result-info">
+                        <h4 class="result-title">${title}</h4>
+                        <p class="result-channel">${channel}</p>
+                    </div>
+                `;
+
+                item.addEventListener('click', () => {
+                    playVideo(videoId, title, description);
+                });
+
+                resultsContainer.appendChild(item);
+            });
+        }
+
+        /**
+         * Loads and plays a new video in the iframe.
+         */
+        function playVideo(id, title, description) {
+            youtubePlayer.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1`;
+            videoTitle.textContent = title;
+            videoDescription.textContent = description;
+
+            if (window.innerWidth < 1025) { 
+                window.scrollTo(0, 0);
+            }
+        }
+
+        /**
+         * Checks if the user has scrolled to the bottom of the results.
+         */
+        function handleScroll() {
+            if (isLoadingMore || !nextPageToken) return;
+
+            const { scrollTop, scrollHeight, clientHeight } = resultsContainer;
+            
+            if (scrollHeight - scrollTop - clientHeight < 100) { 
+                fetchMoreResults();
+            }
+        }
+
+        /**
+         * Fetches the next page of results.
+         */
+        async function fetchMoreResults() {
+            if (isLoadingMore || !nextPageToken || !currentQuery) return;
+            
+            isLoadingMore = true;
+            showScrollLoading(true);
+
+            const data = await fetchVideos(currentQuery, nextPageToken);
+            
+            if (data && data.items) {
+                displayResults(data.items, false); 
+                nextPageToken = data.nextPageToken || null; 
+            }
+            
+            isLoadingMore = false;
+        }
+
+        /**
+         * Shows or hides a loading spinner at the bottom of the results list.
+         */
+        function showScrollLoading(show) {
+            let loader = document.getElementById('scroll-loader');
+            
+            if (show) {
+                if (!loader) {
+                    loader = document.createElement('p');
+                    loader.id = 'scroll-loader';
+                    loader.innerHTML = '<span class="icon"><i class="fas fa-spinner fa-spin"></i></span> Loading more...';
+                    resultsContainer.appendChild(loader);
+                }
+            } else {
+                if (loader) {
+                    loader.remove();
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -19,6 +19,8 @@
             --yt-text-secondary: #606060;
             --yt-search-border: #ccc;
             --yt-search-button-bg: #f8f8f8;
+            --yt-icon-button-hover: #f0f0f0;
+            --yt-metadata-bg: rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -57,6 +59,7 @@
             display: flex;
             align-items: center;
             cursor: pointer;
+            flex-shrink: 0; /* NEW: Prevent shrinking */
         }
         .header-left .icon {
             color: #FF0000;
@@ -75,11 +78,36 @@
             justify-content: center;
             max-width: 720px;
             margin: 0 40px;
+            min-width: 0; /* NEW: Allow shrinking */
         }
         .search-form {
             width: 100%;
             display: flex;
         }
+
+        #search-type {
+            height: 40px;
+            font-size: 14px;
+            border: 1px solid var(--yt-search-border);
+            border-right: none;
+            background-color: var(--yt-search-button-bg);
+            padding: 0 30px 0 12px; /* Increased right padding */
+            min-width: 110px; /* NEW: Set a minimum width */
+            border-radius: 40px 0 0 40px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23606060%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.9%205.4-12.9%200-5-1.8-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px top 50%;
+            background-size: .65em auto;
+            color: var(--yt-text-primary);
+        }
+        #search-type:focus {
+            outline: none;
+        }
+
         #search-input {
             flex: 1;
             height: 40px;
@@ -87,8 +115,9 @@
             font-size: 16px;
             border: 1px solid var(--yt-search-border);
             border-right: none;
-            border-radius: 40px 0 0 40px;
-            min-width: 50px; /* Allow shrinking */
+            border-left: none;
+            border-radius: 0;
+            min-width: 0; /* NEW: Allow shrinking */
         }
         #search-button {
             width: 64px;
@@ -103,12 +132,13 @@
             color: var(--yt-text-secondary);
         }
         #search-button:hover {
-            background-color: #f0f0f0;
+            background-color: var(--yt-icon-button-hover);
         }
 
         .header-right {
             display: flex;
             align-items: center;
+            flex-shrink: 0; /* NEW: Prevent shrinking */
         }
         .header-right .icon {
             font-size: 28px;
@@ -118,21 +148,21 @@
         /* 3. Main Content Area */
         .main-content {
             flex: 1;
-            overflow-y: auto; /* Allows content to scroll */
+            overflow-y: auto;
             padding: 24px;
         }
         .content-grid {
             display: flex;
             flex-direction: row;
             justify-content: center;
-            max-width: 1754px; /* Max width like YouTube */
+            max-width: 1754px;
             margin: 0 auto;
         }
 
         /* 4. Video Player Column */
         .video-primary-col {
             flex: 1;
-            max-width: 1280px; /* Max player width */
+            max-width: 1280px;
             margin: 0 24px;
         }
 
@@ -142,7 +172,7 @@
             height: 0;
             overflow: hidden;
             background: #000;
-            border-radius: 12px; /* Rounded corners for player */
+            border-radius: 12px;
         }
         .video-container iframe {
             position: absolute;
@@ -160,13 +190,130 @@
             font-weight: 600;
             line-height: 28px;
             color: var(--yt-text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 12px; /* NEW: Increased margin */
         }
+
+        /* --- NEW: Video Details Section --- */
+        .video-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--yt-border-color);
+        }
+        
+        .channel-info-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #channel-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--yt-border-color);
+            object-fit: cover;
+        }
+
+        .channel-name-subs {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #channel-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--yt-text-primary);
+        }
+
+        #channel-subs {
+            font-size: 12px;
+            color: var(--yt-text-secondary);
+        }
+
+        /* (Like button is just visual for now) */
+        .like-button {
+            display: flex;
+            align-items: center;
+            background-color: var(--yt-metadata-bg);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .like-button:hover {
+            background-color: var(--yt-border-color);
+        }
+        .like-button .icon {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+        #like-count {
+            margin-left: 4px;
+        }
+
+        .metadata-line {
+            display: flex;
+            align-items: center;
+            background-color: var(--yt-metadata-bg);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--yt-text-primary);
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 12px;
+        }
+        .metadata-line span {
+            margin-right: 8px;
+        }
+
+        /* NEW: Description Box styles */
+        #description-container {
+            background-color: var(--yt-metadata-bg);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
         #video-description {
             font-size: 14px;
             line-height: 20px;
-            color: var(--yt-text-secondary);
+            color: var(--yt-text-primary);
+            white-space: pre-wrap;
+            /* NEW: Line clamping */
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Show 3 lines */
+            -webkit-box-orient: vertical;
         }
+
+        #description-container.expanded #video-description {
+            -webkit-line-clamp: unset; /* Remove line clamp when expanded */
+            max-height: none;
+        }
+
+        #description-toggle {
+            background: none;
+            border: none;
+            color: var(--yt-text-primary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 0 0 0;
+            margin-top: 4px;
+        }
+        /* --- End Video Details --- */
+
 
         /* 5. Recommendations Column */
         .video-secondary-col {
@@ -179,7 +326,7 @@
             margin-bottom: 16px;
         }
         #results-container {
-            max-height: 85vh; /* Adjust height */
+            max-height: 85vh;
             overflow-y: auto;
         }
 
@@ -193,6 +340,7 @@
             width: 168px;
             height: 94px;
             margin-right: 12px;
+            position: relative;
         }
         .result-thumb img {
             width: 100%;
@@ -201,9 +349,27 @@
             border-radius: 8px;
         }
         
+        .playlist-badge {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .playlist-badge .icon {
+            font-size: 10px;
+            margin-right: 4px;
+        }
+        
         .result-info {
             flex: 1;
-            min-width: 0; /* Prevents overflow */
+            min-width: 0;
         }
         .result-title {
             font-size: 14px;
@@ -212,7 +378,6 @@
             line-height: 1.4;
             margin-bottom: 4px;
             
-            /* Ellipsis for long titles */
             white-space: normal;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -226,7 +391,8 @@
         
         /* 7. Error & Loading Styles */
         .loading-spinner,
-        #scroll-loader {
+        #scroll-loader,
+        .comments-loader { /* NEW: Comments loader */
             font-size: 14px;
             color: var(--yt-text-secondary);
             text-align: center;
@@ -243,6 +409,85 @@
             line-height: 1.5;
         }
 
+        /* --- NEW: Comments Section --- */
+        .comments-section {
+            margin-top: 24px;
+        }
+        .comments-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .comment-author-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--yt-border-color);
+            object-fit: cover;
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+        .comment-body {
+            display: flex;
+            flex-direction: column;
+            flex: 1; /* Allow body to grow */
+            min-width: 0; /* Prevent overflow */
+        }
+
+        /* NEW: Comment metadata line */
+        .comment-metadata {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .comment-author-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--yt-text-primary);
+        }
+        /* NEW: Comment date */
+        .comment-date {
+            font-size: 12px;
+            color: var(--yt-text-secondary);
+        }
+
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--yt-text-primary);
+            white-space: pre-wrap; /* Preserve line breaks */
+            word-wrap: break-word; /* Break long words */
+        }
+        
+        /* NEW: Comment actions (likes) */
+        .comment-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            color: var(--yt-text-secondary);
+        }
+        .comment-actions .icon {
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .comment-actions .icon:hover {
+            color: var(--yt-text-primary);
+        }
+        .comment-actions .like-count {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        /* --- End Comments --- */
+
         /* 8. Responsive (Mobile) */
         @media (max-width: 1024px) {
             .content-grid {
@@ -253,31 +498,98 @@
                 margin-top: 24px;
             }
             #results-container {
-                max-height: none; /* Remove fixed height on mobile */
+                max-height: none;
             }
         }
-        @media (max-width: 640px) {
+
+        /* NEW: Added breakpoint for small tablets */
+        @media (max-width: 768px) {
             #main-header {
-                padding: 0 12px;
+                padding: 0 16px;
             }
             .header-center {
-                margin: 0 10px; /* Reduce margin */
-            }
-            .header-left .logo-title {
-                display: none; /* Hide title on small screens */
+                margin: 0 20px;
             }
             .main-content {
-                padding: 12px;
+                padding: 16px;
+            }
+            .video-primary-col {
+                margin: 0 16px;
+            }
+            #video-title {
+                font-size: 18px;
+            }
+            .results-header h3,
+            .comments-section h3 {
+                font-size: 17px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            #main-header {
+-               padding: 0 12px;
+                padding: 0 8px; /* Further reduce padding */
+            }
+            .header-center {
+-               margin: 0 10px;
+                margin: 0 8px; /* Further reduce margin */
+            }
+            .header-left .logo-title {
+                display: none;
+            }
+-           #search-type {
+-               padding: 0 4px 0 8px;
+-               background-position: right 6px top 50%;
+-           }
+            .main-content {
+-               padding: 12px;
+                padding: 12px 8px; /* Less side padding */
             }
             .video-primary-col {
                 margin: 0;
             }
+            /* NEW: Smaller search font on mobile */
+            #search-input {
+                font-size: 14px;
+                height: 36px;
+            }
+            #search-type {
+                font-size: 12px;
+                height: 36px;
+                padding: 0 24px 0 8px; /* Increased right padding */
+                min-width: 100px; /* NEW: Set a minimum width */
+                background-position: right 8px top 50%; /* Adjusted icon position */
+            }
+            #search-button {
+                height: 36px;
+                width: 50px;
+            }
+
             .result-thumb {
                 width: 120px;
                 height: 67px;
             }
             .result-title {
                 font-size: 13px;
+            }
+            
+            /* NEW: Mobile styles for details */
+            .channel-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .metadata-line {
+                font-size: 13px;
+                gap: 8px;
+            }
+            .like-button {
+                width: 100%;
+                justify-content: center;
+            }
+            .comment-author-icon {
+                width: 32px;
+                height: 32px;
             }
         }
 
@@ -294,6 +606,10 @@
 
         <div class="header-center">
             <div class="search-form">
+                <select id="search-type">
+                    <option value="video" selected>Videos</option>
+                    <option value="playlist">Playlists</option>
+                </select>
                 <input id="search-input" type="text" placeholder="Search">
                 <button id="search-button">
                     <span class="icon"><i class="fas fa-search"></i></span>
@@ -315,7 +631,7 @@
                 <div class="video-container">
                     <iframe 
                         id="youtube-player"
-                        src="" <!-- Will be set by JavaScript -->
+                        src=""
                         title="YouTube video player" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -326,19 +642,60 @@
                     <h1 id="video-title">
                         <!-- Will be set by JavaScript -->
                     </h1>
-                    <p id="video-description">
-                        <!-- Will be set by JavaScript -->
-                    </p>
+                    
+                    <!-- NEW: Video Details Block -->
+                    <div class="video-details">
+                        <div class="channel-info">
+                            <div class="channel-info-left">
+                                <img id="channel-icon" src="https://placehold.co/40x40/ccc/ccc?text=C" alt="Channel">
+                                <div class="channel-name-subs">
+                                    <h4 id="channel-name">Channel Name</h4>
+                                    <span id="channel-subs">... subscribers</span>
+                                </div>
+                            </div>
+                            <!-- This is a visual-only button for now -->
+                            <button class="like-button">
+                                <span class="icon"><i class="fas fa-thumbs-up"></i></span>
+                                Like
+                                <span id="like-count"></span>
+                            </button>
+                        </div>
+
+                        <div class="metadata-line">
+                            <span id="video-views">... views</span>
+                            <span id="video-date">...</span>
+                        </div>
+                    </div>
+                    <!-- End Video Details Block -->
+
+                    <!-- NEW: Description container -->
+                    <div id="description-container">
+                        <p id="video-description">
+                            <!-- Will be set by JavaScript -->
+                        </p>
+                        <button id="description-toggle">Show more</button>
+                    </div>
                 </div>
+
+                <!-- NEW: Comments Section -->
+                <div class="comments-section">
+-                   <h3>Comments</h3>
+                    <h3 id="comment-count-header">Comments</h3>
+                    <div id="comments-container">
+                        <p class="comments-loader">
+                            <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                            Loading comments...
+                        </p>
+                    </div>
+                </div>
+                <!-- End Comments Section -->
             </div>
 
             <!-- Recommendations Column -->
             <div class="video-secondary-col">
-                <h3>Up Next / Results</h3>
+                <h3 id="results-title">Up Next / Results</h3>
                 
-                <!-- Results Container -->
                 <div id="results-container">
-                    <!-- Loading message or error will be inserted here -->
                     <p class="loading-spinner">
                         <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
                         Loading...
@@ -352,7 +709,7 @@
     <script>
         // --- JavaScript for Interactivity ---
         
-        // --- Default Video Configuration (Replaces PHP) ---
+        // --- Default Video Configuration ---
         const defaultVideoId = '6lt2k1_gKaY';
         const defaultVideoTitle = 'Beautiful 4K Nature Video';
         const defaultVideoDescription = 'A stunning placeholder video to enjoy.';
@@ -361,25 +718,49 @@
         // Paste your YouTube Data API key here.
         const API_KEY = "AIzaSyALFggcbdrehTGzQQsaXc50M4WTlw2hA20";
         // -------------------------------------------------------------
-        const API_BASE_URL = "https://www.googleapis.com/youtube/v3/search";
+        const API_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
+        const API_PLAYLIST_ITEMS_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
+        // NEW: Endpoints for details and comments
+        const API_VIDEOS_URL = "https://www.googleapis.com/youtube/v3/videos";
+        const API_CHANNELS_URL = "https://www.googleapis.com/youtube/v3/channels";
+        const API_COMMENT_THREADS_URL = "https://www.googleapis.com/youtube/v3/commentThreads";
 
-        // --- State Variables for Infinite Scroll ---
+
+        // --- State Variables ---
         let currentQuery = '';
+        let currentSearchType = 'video';
         let nextPageToken = null;
         let isLoadingMore = false;
+        let isPlaylistView = false;
 
         // --- Get DOM Elements ---
         const searchInput = document.getElementById('search-input');
         const searchButton = document.getElementById('search-button');
+        const searchType = document.getElementById('search-type');
         const youtubePlayer = document.getElementById('youtube-player');
         const resultsContainer = document.getElementById('results-container');
+        const resultsTitle = document.getElementById('results-title');
         const videoTitle = document.getElementById('video-title');
         const videoDescription = document.getElementById('video-description');
+        
+        // NEW: Get detail and comment elements
+        const channelIcon = document.getElementById('channel-icon');
+        const channelName = document.getElementById('channel-name');
+        const channelSubs = document.getElementById('channel-subs');
+        const likeCount = document.getElementById('like-count');
+        const videoViews = document.getElementById('video-views');
+        const videoDate = document.getElementById('video-date');
+        const commentsContainer = document.getElementById('comments-container');
+        // NEW: Get description and comment count elements
+        const descriptionContainer = document.getElementById('description-container');
+        const descriptionToggle = document.getElementById('description-toggle');
+        const commentCountHeader = document.getElementById('comment-count-header');
 
         // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDefaultVideo(); // Load the default video
-            checkApiKey();      // Then, check the API key and load results
+        document.addEventListener('DOMContentLoaded', async () => {
+            // NEW: Make async to wait for default video details
+            await loadDefaultVideo(); 
+            await checkApiKey();
         });
         
         searchButton.addEventListener('click', handleSearch);
@@ -392,15 +773,25 @@
         
         resultsContainer.addEventListener('scroll', handleScroll);
 
+        // NEW: Description toggle listener
+        descriptionToggle.addEventListener('click', () => {
+            descriptionContainer.classList.toggle('expanded');
+            if (descriptionContainer.classList.contains('expanded')) {
+                descriptionToggle.textContent = 'Show less';
+            } else {
+                descriptionToggle.textContent = 'Show more';
+            }
+        });
+
         // --- Core Functions ---
 
         /**
-         * NEW: Loads the default video info on page load.
+         * Loads the default video, details, and comments on page load.
          */
-        function loadDefaultVideo() {
-            youtubePlayer.src = `https://www.youtube.com/embed/${defaultVideoId}?rel=0&autoplay=1&mute=1`;
-            videoTitle.textContent = defaultVideoTitle;
-            videoDescription.textContent = defaultVideoDescription;
+        async function loadDefaultVideo() {
+            // This function now just *starts* the process
+            // playVideo will handle all the fetching
+            await playVideo(defaultVideoId, defaultVideoTitle, defaultVideoDescription);
         }
 
         /**
@@ -412,13 +803,16 @@
                 return;
             }
             
-            // Perform a test search to validate the key
-            currentQuery = "nature"; // Set initial query state
-            const data = await fetchVideos(currentQuery);
+            currentQuery = "nature";
+            currentSearchType = "video";
+            isPlaylistView = false;
+            resultsTitle.textContent = "Up Next / Results";
+
+            const data = await fetchApiData(currentQuery, currentSearchType);
             
             if (data && data.items) {
-                displayResults(data.items, true); // Clear and display first page
-                nextPageToken = data.nextPageToken || null; // Store the token
+                displayResults(data.items, true);
+                nextPageToken = data.nextPageToken || null;
             }
         }
 
@@ -437,28 +831,30 @@
                 return;
             }
             
-            // Reset state for new search
             currentQuery = query;
+            currentSearchType = searchType.value;
             nextPageToken = null;
+            isPlaylistView = false;
+            resultsTitle.textContent = "Search Results";
             
             resultsContainer.innerHTML = `
                 <p class="loading-spinner">
                     <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
-                    Searching for "${query}"...
+                    Searching for ${currentSearchType}s...
                 </p>`;
 
-            const data = await fetchVideos(currentQuery);
+            const data = await fetchApiData(currentQuery, currentSearchType);
             if (data && data.items) {
-                displayResults(data.items, true); // Clear and display results
-                nextPageToken = data.nextPageToken || null; // Store new token
+                displayResults(data.items, true);
+                nextPageToken = data.nextPageToken || null;
             }
         }
 
         /**
-         * Fetches videos from the YouTube API.
+         * Fetches videos or playlists from the YouTube Search API.
          */
-        async function fetchVideos(query, pageToken = null) {
-            let url = `${API_BASE_URL}?part=snippet&q=${encodeURIComponent(query)}&key=${API_KEY}&type=video&maxResults=15`;
+        async function fetchApiData(query, type, pageToken = null) {
+            let url = `${API_SEARCH_URL}?part=snippet&q=${encodeURIComponent(query)}&key=${API_KEY}&type=${type}&maxResults=15`;
             
             if (pageToken) {
                 url += `&pageToken=${pageToken}`;
@@ -506,25 +902,140 @@
         }
 
         /**
-         * Displays the list of videos in the results container.
+         * Displays the list of search results (videos or playlists).
          */
-        function displayResults(videos, clear = false) {
+        function displayResults(items, clear = false) {
             if (clear) {
                 resultsContainer.innerHTML = ''; 
             }
 
             showScrollLoading(false); 
 
-            videos.forEach(video => {
-                const videoId = video.id.videoId;
-                const title = video.snippet.title;
-                const channel = video.snippet.channelTitle;
-                const description = video.snippet.description;
-                const thumbnailUrl = video.snippet.thumbnails.default.url;
+            items.forEach(item => {
+                const kind = item.id.kind;
+                const snippet = item.snippet;
+                const title = snippet.title;
+                const channel = snippet.channelTitle;
+                const description = snippet.description;
+                const thumbnailUrl = snippet.thumbnails.default.url;
 
-                const item = document.createElement('article');
-                item.className = 'result-item';
-                item.innerHTML = `
+                const itemEl = document.createElement('article');
+                itemEl.className = 'result-item';
+                
+                if (kind === 'youtube#video') {
+                    const videoId = item.id.videoId;
+                    itemEl.innerHTML = `
+                        <div class="result-thumb">
+                            <img src="${thumbnailUrl}" alt="${title}">
+                        </div>
+                        <div class="result-info">
+                            <h4 class="result-title">${title}</h4>
+                            <p class="result-channel">${channel}</p>
+                        </div>
+                    `;
+                    itemEl.addEventListener('click', () => {
+                        playVideo(videoId, title, description);
+                    });
+
+                } else if (kind === 'youtube#playlist') {
+                    const playlistId = item.id.playlistId;
+                    itemEl.innerHTML = `
+                        <div class="result-thumb">
+                            <img src="${thumbnailUrl}" alt="${title}">
+                            <div class="playlist-badge">
+                                <span class="icon"><i class="fas fa-bars"></i></span>
+                                <span>Playlist</span>
+                            </div>
+                        </div>
+                        <div class="result-info">
+                            <h4 class="result-title">${title}</h4>
+                            <p class="result-channel">${channel}</p>
+                        </div>
+                    `;
+                    itemEl.addEventListener('click', () => {
+                        handlePlaylistClick(playlistId, title);
+                    });
+                }
+                
+                resultsContainer.appendChild(itemEl);
+            });
+        }
+        
+        // --- Playlist Functions ---
+
+        /**
+         * Handles the click on a playlist search result.
+         */
+        async function handlePlaylistClick(playlistId, title) {
+            resultsTitle.textContent = `Playlist: ${title}`;
+            resultsContainer.innerHTML = `
+                <p class="loading-spinner">
+                    <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                    Loading playlist...
+                </p>`;
+            
+            isPlaylistView = true;
+            nextPageToken = null; 
+
+            const items = await fetchPlaylistItems(playlistId);
+            
+            if (items) {
+                displayPlaylist(items);
+            }
+        }
+        
+        /**
+         * Fetches all items (videos) from a specific playlist.
+         */
+        async function fetchPlaylistItems(playlistId) {
+            let url = `${API_PLAYLIST_ITEMS_URL}?part=snippet&playlistId=${playlistId}&key=${API_KEY}&maxResults=25`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const errorMsg = data.error?.message || `HTTP Error: ${response.status}`;
+                    console.error("API Error:", data);
+                    displayError(`<strong>Error:</strong> ${errorMsg}<br>Could not load playlist.`);
+                    return null;
+                }
+                
+                return data.items;
+
+            } catch (error) {
+                console.error("Network Error:", error);
+                displayError("<strong>Network Error</strong><br>Could not connect to YouTube.");
+                return null;
+            }
+        }
+
+        /**
+         * Displays the videos from a playlist in the results container.
+         */
+        function displayPlaylist(items) {
+            resultsContainer.innerHTML = '';
+            
+            if (!items || items.length === 0) {
+                displayError("This playlist is empty or private.");
+                return;
+            }
+
+            // Play the first video in the playlist
+            const firstVideo = items[0].snippet;
+            playVideo(firstVideo.resourceId.videoId, firstVideo.title, firstVideo.description);
+
+            // Display all videos in the "Up Next" list
+            items.forEach(item => {
+                const snippet = item.snippet;
+                const videoId = snippet.resourceId.videoId;
+                const title = snippet.title;
+                const channel = snippet.videoOwnerChannelTitle;
+                const thumbnailUrl = snippet.thumbnails.default ? snippet.thumbnails.default.url : 'https://placehold.co/120x90/000/fff?text=No+Thumb';
+
+                const itemEl = document.createElement('article');
+                itemEl.className = 'result-item';
+                itemEl.innerHTML = `
                     <div class="result-thumb">
                         <img src="${thumbnailUrl}" alt="${title}">
                     </div>
@@ -534,24 +1045,58 @@
                     </div>
                 `;
 
-                item.addEventListener('click', () => {
-                    playVideo(videoId, title, description);
+                itemEl.addEventListener('click', () => {
+                    playVideo(videoId, title, snippet.description);
                 });
 
-                resultsContainer.appendChild(item);
+                resultsContainer.appendChild(itemEl);
             });
         }
 
+        // --- Standard Functions ---
+
         /**
-         * Loads and plays a new video in the iframe.
+         * Loads/plays video, then fetches all its details and comments.
+         * This is now the main function for changing the video.
          */
-        function playVideo(id, title, description) {
+        async function playVideo(id, title, description) {
+            if (!id) {
+                console.error("playVideo called with invalid ID");
+                return;
+            }
             youtubePlayer.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1`;
             videoTitle.textContent = title;
-            videoDescription.textContent = description;
+            videoDescription.textContent = description || 'No description available.';
 
             if (window.innerWidth < 1025) { 
                 window.scrollTo(0, 0);
+            }
+
+            // Reset details and comments with loaders
+            resetVideoDetails();
+            resetComments();
+
+            // Fetch details and comments in parallel
+            try {
+                // We need details first to get the channelId
+                const videoDetails = await fetchVideoDetails(id);
+                if (videoDetails) {
+                    displayVideoDetails(videoDetails);
+                    // Now fetch channel details
+                    const channelDetails = await fetchChannelDetails(videoDetails.snippet.channelId);
+                    if (channelDetails) {
+                        displayChannelDetails(channelDetails);
+                    }
+                }
+                
+                // Fetch comments
+                const commentThreads = await fetchComments(id);
+                if (commentThreads) {
+                    displayComments(commentThreads);
+                }
+
+            } catch (error) {
+                console.error("Error fetching video details or comments:", error);
             }
         }
 
@@ -559,10 +1104,8 @@
          * Checks if the user has scrolled to the bottom of the results.
          */
         function handleScroll() {
-            if (isLoadingMore || !nextPageToken) return;
-
+            if (isLoadingMore || !nextPageToken || isPlaylistView) return;
             const { scrollTop, scrollHeight, clientHeight } = resultsContainer;
-            
             if (scrollHeight - scrollTop - clientHeight < 100) { 
                 fetchMoreResults();
             }
@@ -577,11 +1120,11 @@
             isLoadingMore = true;
             showScrollLoading(true);
 
-            const data = await fetchVideos(currentQuery, nextPageToken);
+            const data = await fetchApiData(currentQuery, currentSearchType, nextPageToken);
             
             if (data && data.items) {
-                displayResults(data.items, false); 
-                nextPageToken = data.nextPageToken || null; 
+                displayResults(data.items, false);
+                nextPageToken = data.nextPageToken || null;
             }
             
             isLoadingMore = false;
@@ -607,7 +1150,213 @@
             }
         }
 
+        // --- NEW: Detail & Comment Functions ---
+
+        /**
+         * Resets the video details to a loading state.
+         */
+        function resetVideoDetails() {
+            channelIcon.src = 'https://placehold.co/40x40/ccc/ccc?text=C';
+            channelName.textContent = 'Loading...';
+            channelSubs.textContent = '... subscribers';
+            likeCount.textContent = '';
+            videoViews.textContent = '... views';
+            videoDate.textContent = '...';
+            // NEW: Reset description box
+            descriptionContainer.classList.remove('expanded');
+            descriptionToggle.textContent = 'Show more';
+        }
+
+        /**
+         * Resets the comments block to a loading state.
+         */
+        function resetComments() {
+            commentsContainer.innerHTML = `
+                <p class="comments-loader">
+                    <span class="icon"><i class="fas fa-spinner fa-spin"></i></span>
+                    Loading comments...
+                </p>`;
+            // NEW: Reset comment count header
+            commentCountHeader.textContent = 'Comments';
+        }
+
+        /**
+         * Fetches stats for a single video ID.
+         */
+        async function fetchVideoDetails(id) {
+            const url = `${API_VIDEOS_URL}?part=snippet,statistics&id=${id}&key=${API_KEY}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (!response.ok || !data.items || data.items.length === 0) {
+                    throw new Error(data.error?.message || "Could not fetch video details.");
+                }
+                return data.items[0]; // Return the full video object
+            } catch (error) {
+                console.error("Error fetching video details:", error);
+                videoViews.textContent = "Error loading stats";
+                return null;
+            }
+        }
+
+        /**
+         * Fetches stats for a single channel ID.
+         */
+        async function fetchChannelDetails(id) {
+            const url = `${API_CHANNELS_URL}?part=snippet,statistics&id=${id}&key=${API_KEY}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (!response.ok || !data.items || data.items.length === 0) {
+                    throw new Error(data.error?.message || "Could not fetch channel details.");
+                }
+                return data.items[0]; // Return the full channel object
+            } catch (error) {
+                console.error("Error fetching channel details:", error);
+                channelName.textContent = "Error loading channel";
+                return null;
+            }
+        }
+
+        /**
+         * Fetches top-level comments for a video ID.
+         */
+        async function fetchComments(id) {
+            const url = `${API_COMMENT_THREADS_URL}?part=snippet&videoId=${id}&key=${API_KEY}&order=relevance&maxResults=20`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error?.message || "Could not fetch comments.");
+                }
+                return data.items; // Return the array of comment threads
+            } catch (error) {
+                console.error("Error fetching comments:", error);
+                commentsContainer.innerHTML = `<p class="error-message" style="background: none; border: none; color: var(--yt-text-secondary);">Comments are disabled or could not be loaded.</p>`;
+                return null;
+            }
+        }
+
+        /**
+         * Displays the fetched video details in the HTML.
+         */
+        function displayVideoDetails(details) {
+            const stats = details.statistics;
+            const snippet = details.snippet;
+            
+            videoViews.textContent = `${formatNumber(stats.viewCount)} views`;
+            likeCount.textContent = formatNumber(stats.likeCount);
+            videoDate.textContent = formatDate(snippet.publishedAt);
+            
+            // Set channel name from this request (it's more accurate)
+            channelName.textContent = snippet.channelTitle;
+            
+            // Update description from this snippet (it's often more complete)
+            videoDescription.textContent = snippet.description || 'No description available.';
+
+            // NEW: Update comment count
+            if (stats.commentCount) {
+                commentCountHeader.textContent = `${formatNumber(stats.commentCount)} Comments`;
+            } else {
+                commentCountHeader.textContent = 'Comments';
+            }
+        }
+        
+        /**
+         * Displays the fetched channel details in the HTML.
+         */
+        function displayChannelDetails(details) {
+            channelIcon.src = details.snippet.thumbnails.default.url;
+            channelSubs.textContent = `${formatNumber(details.statistics.subscriberCount)} subscribers`;
+        }
+        
+        /**
+         * Displays the fetched comments in the HTML.
+         */
+        function displayComments(threads) {
+            commentsContainer.innerHTML = ''; // Clear loader
+            
+            if (!threads || threads.length === 0) {
+                commentsContainer.innerHTML = `<p style="color: var(--yt-text-secondary); font-size: 14px;">No comments yet.</p>`;
+                return;
+            }
+
+            threads.forEach(thread => {
+                const comment = thread.snippet.topLevelComment.snippet;
+                
+                const commentEl = document.createElement('div');
+                commentEl.className = 'comment-item';
+                commentEl.innerHTML = `
+                    <img src="${comment.authorProfileImageUrl}" alt="${comment.authorDisplayName}" class="comment-author-icon">
+                    <div class="comment-body">
+                        <div class="comment-metadata">
+                            <span class="comment-author-name">${comment.authorDisplayName}</span>
+                            <span class="comment-date">${formatDate(comment.publishedAt)}</span>
+                        </div>
+                        <p class="comment-text">${comment.textDisplay.replace(/\n/g, '<br>')}</p> <!-- Preserve line breaks -->
+                        <div class="comment-actions">
+                            <span class="icon"><i class="fas fa-thumbs-up"></i></span>
+                            <span class="like-count">${formatNumber(comment.likeCount)}</span>
+                        </div>
+                    </div>
+                `;
+                commentsContainer.appendChild(commentEl);
+            });
+        }
+
+        // --- NEW: Helper Functions for Formatting ---
+
+        /**
+         * Formats a large number into a compact string (e.g., 1.2M).
+         */
+        function formatNumber(num) {
+            if (!num) return '...';
+            try {
+                return new Intl.NumberFormat('en-US', {
+                    notation: 'compact',
+                    maximumFractionDigits: 1
+                }).format(num);
+            } catch (e) {
+                return num;
+            }
+        }
+
+        /**
+         * Formats an ISO date string into a "time ago" format.
+         */
+        function formatDate(dateString) {
+            if (!dateString) return '...';
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const seconds = Math.floor((now - date) / 1000);
+
+                let interval = seconds / 31536000; // years
+                if (interval > 1.5) return Math.floor(interval) + " years ago";
+                if (interval > 1) return "1 year ago";
+                
+                interval = seconds / 2592000; // months
+                if (interval > 1.5) return Math.floor(interval) + " months ago";
+                if (interval > 1) return "1 month ago";
+
+                interval = seconds / 86400; // days
+                if (interval > 1.5) return Math.floor(interval) + " days ago";
+                if (interval > 1) return "1 day ago";
+                
+                interval = seconds / 3600; // hours
+                if (interval > 1.5) return Math.floor(interval) + " hours ago";
+                if (interval > 1) return "1 hour ago";
+
+                interval = seconds / 60; // minutes
+                if (interval > 1.5) return Math.floor(interval) + " minutes ago";
+                if (interval > 1) return "1 minute ago";
+                
+                return "just now";
+            } catch (e) {
+                return '...';
+            }
+        }
+
     </script>
 </body>
-
 </html>
